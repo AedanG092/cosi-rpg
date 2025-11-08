@@ -1,16 +1,36 @@
 extends CharacterBody2D
 
-const speed = 10;
+const speed: float = 40000
 
-func _ready():
-	pass
+@onready var animation_player = $AnimatedSprite2D
 	
-func _physics_process(_delta: float) -> void:
-	if Input.is_action_pressed(&"move_right"):
-		move_and_collide(Vector2(speed, 0))
-	if Input.is_action_pressed(&"move_left"):
-		move_and_collide(Vector2(-speed, 0))
-	if Input.is_action_pressed(&"move_down"):
-		move_and_collide(Vector2(0, speed))
-	if Input.is_action_pressed(&"move_up"):
-		move_and_collide(Vector2(0, -speed))
+func _physics_process(delta: float) -> void:
+	var vec: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	
+	update_animation(vec)
+	
+	if vec == Vector2.ZERO:
+		velocity = Vector2.ZERO
+	else:
+		velocity = vec.normalized() * speed * delta
+		move_and_slide()
+
+
+func update_animation(direction: Vector2) -> void:
+	# choose animation, with priority for left and right
+	if direction == Vector2.ZERO: # not moving
+		animation_player.stop()
+	elif abs(direction.x) > 0.01: # moving left / right
+		if direction.x > 0.01:
+			animation_player.play("moving_left")
+			animation_player.flip_h = false
+		else:
+			animation_player.play("moving_left")
+			animation_player.flip_h = true
+	else: # moving up / down
+		animation_player.flip_h = false
+		if velocity.y > 0.01:
+			animation_player.play("moving_down")
+		else:
+			animation_player.play("moving_up")
+	
