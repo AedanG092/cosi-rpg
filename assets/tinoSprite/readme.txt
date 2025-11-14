@@ -8,3 +8,4 @@ Nov 14:
 
 Decided on normal sized tino. Edited image to be more 2.5D or top down rather than front facing.
 Uploaded walk animations.
+Finished sprite sheet.
